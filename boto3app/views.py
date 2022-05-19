@@ -11,7 +11,7 @@ from .serializers import ProfileImageSerializer, CoverImageSerializer
 
 # Create your views here.
 
-# connection_string = 'mongodb+srv://adebimpe_access:evhvZ68f40zeAzT6@prime.klo1e.mongodb.net/NG-STABLE?retryWrites=true&w=majority'
+# connection_string = os.environ.get('MONGO_DB_CONNECTION_STRING')
 # client = MongoClient('connection_string')
 # db = client['NG-STABLE']
 # collection_name = db["MERCHANTS"]
