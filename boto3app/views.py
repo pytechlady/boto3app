@@ -27,14 +27,17 @@ class UploadProfileImage(generics.GenericAPIView):
     serializer_class = ProfileImageSerializer
     parser_classes = (MultiPartParser,)
     
-    def post(self, request, format=None):
+    def patch(self, request, format=None):
+        user = request.user
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             image_extension = os.path.splitext(str(request.data['profile_image']))[1]
             image_name = datetime.now().strftime("%d-%m-%YT%H:%M:%S") + image_extension
             session = Session(region_name=env('AWS_S3_REGION_NAME'), aws_access_key_id=env('AWS_ACCESS_KEY_ID'), aws_secret_access_key=env('AWS_SECRET_ACCESS_KEY'))
             s3 = session.resource('s3')
-            s3.Bucket(env('AWS_STORAGE_BUCKET_NAME')).put_object(Key=image_name, Body=request.data['profile_image'])
+            # s3.meta.client.upload_file(image_name, env('AWS_STORAGE_BUCKET_NAME'), Key=request.data['profile_image'], ExtraArgs={'ACL': "public-read"})
+            s3.Bucket(env('AWS_STORAGE_BUCKET_NAME')).put_object(Key=image_name, Body=request.data['profile_image'],
+                                                                 ACL='public-read')
             
             return Response({"message": "Successful"}, status=status.HTTP_201_CREATED)
         
